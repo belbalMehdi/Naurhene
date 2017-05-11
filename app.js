@@ -11,28 +11,12 @@ var tabRows = [
             [1,0,0,1,3,1],
             [1,0,1,0,0,1],
             [1,0,1,1,0,1],
-            [1,1,1,1,1,0],
+            [1,0,1,1,1,1],
             [1,2,2,1,1,0],
             [1,0,0,1,0,0]
           ];
 
 var tableau = document.querySelector("#page")
-
-var reorder = function(){
-  for(var i=0;i<tabCols.length;i++){
-    for(var j=0;j<tabCols[i].length;j++)
-    {
-      if(tabCols[i][j]==0){
-        tabCols[i].splice(j,1);
-        tabCols[i].push(0);
-        tabRows[i].splice(j,1);
-        tabRows[i].push(0);
-      }
-    }
-  }
-}
-
-reorder();
 
 var draw = function(){
   var game = "";
@@ -49,7 +33,41 @@ var draw = function(){
   }
   tableau.innerHTML = game;
 }
-draw();
+
+var showTables = function(){
+  resultat = "";
+  resultat2 = "";
+  for(var i=0;i<tabCols.length;i++){
+    for(var j=0;j<tabCols[i].length;j++)
+    {
+      resultat += tabCols[i][j] + ' ,';
+      resultat2 += tabRows[i][j] + ' ,';
+    }
+    resultat += "\n";
+    resultat2 += "\n";
+  }
+  console.info("####################################");
+  console.log(resultat);
+  console.log(resultat2);
+}
+
+var reorder = function(){
+  for(var i=0;i<tabCols.length;i++){
+    for(var j=0;j<tabCols[i].length;j++)
+    {
+      if(tabCols[i][j]==0){
+        tabCols[i].splice(j,1);
+        tabCols[i].push(0);
+        tabRows[i].splice(j,1);
+        tabRows[i].push(0);
+      }
+    }
+  }
+  showTables();
+  draw();
+}
+
+reorder();
 
 
 var memory = {};
@@ -98,6 +116,10 @@ document.addEventListener('keyup',function(e){
         tabCols[memory.i][memory.j]=1;
         tabRows[memory.i+1][trouverPositionRows(memory,1)] = ancienneValeur;
         tabCols[memory.i+1][trouverPositionRows(memory,1)] = 1;
+        tabCols[memory.i+1].splice(trouverPositionRows(memory,1)+1, 0, 1);
+        tabCols[memory.i+1].splice(6,1);
+        tabRows[memory.i+1].splice(trouverPositionRows(memory,1)+1, 0, 1);
+        tabRows[memory.i+1].splice(6,1);
         tabRows[memory.i+taille][trouverPositionRows(memory,taille)] = 0;
         tabCols[memory.i+taille][trouverPositionRows(memory,taille)] = 0;
       }
@@ -109,41 +131,27 @@ document.addEventListener('keyup',function(e){
     {
       console.log("test taille passed");
       if(tabCols[memory.i-1][trouverPositionRows(memory,-1)]==1&&tabRows[memory.i-1][trouverPositionRows(memory,-1)]==1){
-        console.log("test previous passed");
+        //console.log("test previous passed");
         ancienneValeur = taille;
-        console.log((memory.i+taille-1)+' / '+memory.j);
+        //console.log((memory.i+taille-1)+' / '+memory.j);
         tabRows[memory.i][memory.j]=0;
         tabCols[memory.i][memory.j]=0;
-        console.log("-1 :::: "+trouverPositionRows(memory,-1));
+        //console.log("-1 :::: "+trouverPositionRows(memory,-1));
         tabRows[memory.i-1][trouverPositionRows(memory,-1)] = taille;
         tabCols[memory.i-1][trouverPositionRows(memory,-1)] = 1;
+        console.log("##############UUUUUUUUUUUU##############");
+        console.log(tabRows[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]);
         tabRows[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]=1;
         tabCols[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]=1;
+        tabCols[memory.i+taille-1].splice(trouverPositionRows(memory,(taille-1)), 0, 1);
+        tabCols[memory.i+taille-1].splice(6,1);
+        tabRows[memory.i+taille-1].splice(trouverPositionRows(memory,(taille-1)), 0, 1);
+        tabRows[memory.i+taille-1].splice(6,1);
       }
     }
   }
   reorder();
-  showTables();
-  draw();
 })
-
-
-var showTables = function(){
-  resultat = "";
-  resultat2 = "";
-  for(var i=0;i<tabCols.length;i++){
-    for(var j=0;j<tabCols[i].length;j++)
-    {
-      resultat += tabCols[i][j] + ' ,';
-      resultat2 += tabRows[i][j] + ' ,';
-    }
-    resultat += "\n";
-    resultat2 += "\n";
-  }
-  console.info("####################################");
-  console.log(resultat);
-  console.log(resultat2);
-}
 
 var trouverPositionCols = function(i,pos){
   var k=-1;
