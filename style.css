@@ -1,8 +1,18 @@
 #page{
   width : 600px;
   height : 600px;
+  background: url("images/bg.jpg");
 }
 
 td{
   width : 100px;
+  border-radius: 10px;
+}
+
+#gameOver{
+	width:70vw;
+	height : 90vh;
+	background : url("images/gameOver.jpg") no-repeat;
+	background-size: 100%;
+	display: none;
 }

@@ -15,61 +15,26 @@ var tabRows = [
             [1,2,2,1,1,0],
             [1,0,0,1,0,0]
           ];
-
+var redPos = {i:2,j:0};
 var tableau = document.querySelector("#page")
 
 var draw = function(){
   var game = "";
-  var color = "black";
+  var style = "";
   for(var i=0;i<tabCols.length;i++){
     game += "<tr>";
     for(var j=0;j<tabCols[i].length;j++)
     {
-      if(tabCols[i][j]>1||tabRows[i][j]>1) color="yellow";
-      else color = "black";
-      if(tabCols[i][j]>0) game+='<td colspan="'+tabCols[i][j]+'" rowspan="'+tabRows[i][j]+'" style="background-color:'+color+'"></td>';
+      if(tabCols[i][j]>1||tabRows[i][j]>1) style='background:url(images/wood.jpg) no-repeat; border : 3px outset #713F1A;';
+      else style = "background :none; border : none;";
+      if(i==redPos.i&&j==redPos.j)style='background:url(images/redwood.jpg) no-repeat; border : 3px outset #713F1A;';
+      if(tabCols[i][j]>0) game+='<td colspan="'+tabCols[i][j]+'" rowspan="'+tabRows[i][j]+'" style="'+style+'"></td>';
     }
     game += "</tr>";
   }
   tableau.innerHTML = game;
 }
-
-var showTables = function(){
-  resultat = "";
-  resultat2 = "";
-  for(var i=0;i<tabCols.length;i++){
-    for(var j=0;j<tabCols[i].length;j++)
-    {
-      resultat += tabCols[i][j] + ' ,';
-      resultat2 += tabRows[i][j] + ' ,';
-    }
-    resultat += "\n";
-    resultat2 += "\n";
-  }
-  console.info("####################################");
-  console.log(resultat);
-  console.log(resultat2);
-}
-
-var reorder = function(){
-  for(var i=0;i<tabCols.length;i++){
-    for(var j=0;j<tabCols[i].length;j++)
-    {
-      if(tabCols[i][j]==0){
-        tabCols[i].splice(j,1);
-        tabCols[i].push(0);
-        tabRows[i].splice(j,1);
-        tabRows[i].push(0);
-      }
-    }
-  }
-  showTables();
-  draw();
-}
-
-reorder();
-
-
+draw();
 var memory = {};
 document.addEventListener('click',function(e){
   memory.target = e.target;
@@ -87,70 +52,68 @@ document.addEventListener('click',function(e){
 
 document.addEventListener('keyup',function(e){
   if(e.key=="ArrowRight"){
-    if(tabCols[memory.i][memory.j]>1)
+    var taille = tabCols[memory.i][memory.j]
+    if(taille>1)
     {
-      if(tabCols[memory.i][memory.j+1]==1&&tabRows[memory.i][memory.j+1]==1){
-        ancienneValeur = tabCols[memory.i][memory.j];
+      if(tabCols[memory.i][memory.j+taille]==1&&tabRows[memory.i][memory.j+taille]==1){
         tabCols[memory.i][memory.j]=1;
-        tabCols[memory.i][memory.j+1] = ancienneValeur;
+        tabRows[memory.i][memory.j]=1;
+        tabCols[memory.i][memory.j+1] = taille;
+        tabRows[memory.i][memory.j+1] = 1;
+        tabCols[memory.i][memory.j+taille] = 0;
+        tabRows[memory.i][memory.j+taille] = 0;
+        if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i, j:memory.j+1};
       }
     }
   }
   if(e.key=="ArrowLeft"){
-    if(tabCols[memory.i][memory.j]>1)
+    var taille = tabCols[memory.i][memory.j];
+    if(taille>1)
     {
       if(tabCols[memory.i][memory.j-1]==1&&tabRows[memory.i][memory.j-1]==1){
-        ancienneValeur = tabCols[memory.i][memory.j];
-        tabCols[memory.i][memory.j]=1;
-        tabCols[memory.i][memory.j-1] = ancienneValeur;
+        tabCols[memory.i][memory.j-1] = taille;
+        tabRows[memory.i][memory.j-1] = 1;
+        tabCols[memory.i][memory.j]=0;
+        tabRows[memory.i][memory.j]=0;
+        tabCols[memory.i][memory.j+taille-1] = 1;
+        tabRows[memory.i][memory.j+taille-1] = 1;
+        if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i, j:memory.j-1};
       }
     }
   }
   if(e.key=="ArrowDown"){
     var taille = tabRows[memory.i][memory.j];
     if(taille>1)
-    {
-      if(tabCols[memory.i+taille][trouverPositionRows(memory,taille)]==1&&tabRows[memory.i+taille][trouverPositionRows(memory,taille)]==1){
-        ancienneValeur = taille;
+    {            
+      if(tabCols[memory.i+taille][memory.j]==1&&tabRows[memory.i+taille][memory.j]==1){
         tabRows[memory.i][memory.j]=1;
         tabCols[memory.i][memory.j]=1;
-        tabRows[memory.i+1][trouverPositionRows(memory,1)] = ancienneValeur;
-        tabCols[memory.i+1][trouverPositionRows(memory,1)] = 1;
-        tabCols[memory.i+1].splice(trouverPositionRows(memory,1)+1, 0, 1);
-        tabCols[memory.i+1].splice(6,1);
-        tabRows[memory.i+1].splice(trouverPositionRows(memory,1)+1, 0, 1);
-        tabRows[memory.i+1].splice(6,1);
-        tabRows[memory.i+taille][trouverPositionRows(memory,taille)] = 0;
-        tabCols[memory.i+taille][trouverPositionRows(memory,taille)] = 0;
+        tabRows[memory.i+1][memory.j] = taille;
+        tabCols[memory.i+1][memory.j] = 1;
+        tabRows[memory.i+taille][memory.j] = 0;
+        tabCols[memory.i+taille][memory.j] = 0;
+        if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i+1, j:memory.j};
       }
     }
   }
   if(e.key=="ArrowUp"){
     var taille = tabRows[memory.i][memory.j];
     if(taille>1)
-    {
-      console.log("test taille passed");
-      if(tabCols[memory.i-1][trouverPositionRows(memory,-1)]==1&&tabRows[memory.i-1][trouverPositionRows(memory,-1)]==1){
-        //console.log("test previous passed");
-        ancienneValeur = taille;
-        //console.log((memory.i+taille-1)+' / '+memory.j);
+    {      
+      if(tabCols[memory.i-1][memory.j]==1&&tabRows[memory.i-1][memory.j]==1){
         tabRows[memory.i][memory.j]=0;
         tabCols[memory.i][memory.j]=0;
-        //console.log("-1 :::: "+trouverPositionRows(memory,-1));
-        tabRows[memory.i-1][trouverPositionRows(memory,-1)] = taille;
-        tabCols[memory.i-1][trouverPositionRows(memory,-1)] = 1;
-        console.log("##############UUUUUUUUUUUU##############");
-        console.log(tabRows[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]);
-        tabRows[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]=1;
-        tabCols[memory.i+taille-1][trouverPositionRows(memory,(taille-1))]=1;
-        tabCols[memory.i+taille-1].splice(trouverPositionRows(memory,(taille-1)), 0, 1);
-        tabCols[memory.i+taille-1].splice(6,1);
-        tabRows[memory.i+taille-1].splice(trouverPositionRows(memory,(taille-1)), 0, 1);
-        tabRows[memory.i+taille-1].splice(6,1);
+        tabRows[memory.i-1][memory.j] = taille;
+        tabCols[memory.i-1][memory.j] = 1;        
+        tabRows[memory.i+taille-1][memory.j]=1;
+        tabCols[memory.i+taille-1][memory.j]=1;
+        if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i-1, j:memory.j};
       }
     }
   }
-  reorder();
+  draw();
+  console.log(redPos);
+  if(redPos.i==2&&redPos.j==4) gameOver();
 })
 
 var trouverPositionCols = function(i,pos){
@@ -167,24 +130,7 @@ var trouverPositionCols = function(i,pos){
   return z;
 }
 
-var trouverPositionRows = function(memo,offset){
-  posx = memo.i;
-  posy = memo.j;
-  console.log(posx+' / '+posy);
-  var somme = 0;
-  var somme2 = 0;
-  var z=0;
-  for(var j=0;j<posy;j++)
-  {
-    somme += tabCols[posx][j];
-  }
-  for(var j=0;j<tabCols[posx+offset].length;j++)
-  {
-    somme2 += tabCols[posx+offset][j];
-    if(somme==somme2){
-      z = j+1;
-      break;
-    }
-  }
-  return z;
+var gameOver = function(){
+  document.querySelector("#page").style.display = "none";
+  document.querySelector("#gameOver").style.display = "block";
 }
