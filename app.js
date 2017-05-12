@@ -52,6 +52,7 @@ document.addEventListener('click',function(e){
 
 document.addEventListener('keyup',function(e){
   if(e.key=="ArrowRight"){
+    console.log(memory);
     var taille = tabCols[memory.i][memory.j]
     if(taille>1)
     {
@@ -63,6 +64,7 @@ document.addEventListener('keyup',function(e){
         tabCols[memory.i][memory.j+taille] = 0;
         tabRows[memory.i][memory.j+taille] = 0;
         if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i, j:memory.j+1};
+        memory.j++;
       }
     }
   }
@@ -78,6 +80,7 @@ document.addEventListener('keyup',function(e){
         tabCols[memory.i][memory.j+taille-1] = 1;
         tabRows[memory.i][memory.j+taille-1] = 1;
         if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i, j:memory.j-1};
+        memory.j--;
       }
     }
   }
@@ -93,6 +96,7 @@ document.addEventListener('keyup',function(e){
         tabRows[memory.i+taille][memory.j] = 0;
         tabCols[memory.i+taille][memory.j] = 0;
         if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i+1, j:memory.j};
+        memory.i++;
       }
     }
   }
@@ -108,6 +112,7 @@ document.addEventListener('keyup',function(e){
         tabRows[memory.i+taille-1][memory.j]=1;
         tabCols[memory.i+taille-1][memory.j]=1;
         if(memory.i==redPos.i&&memory.j==redPos.j) redPos = {i:memory.i-1, j:memory.j};
+        memory.i--;
       }
     }
   }
